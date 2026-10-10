@@ -1,0 +1,12 @@
+[
+  {
+    "image": "sample_pass.jpg",
+    "taskId": "t1",
+    "expected": true
+  },
+  {
+    "image": "sample_fail.jpg",
+    "taskId": "t1",
+    "expected": false
+  }
+]

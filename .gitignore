@@ -1,0 +1,7 @@
+.env
+*.exe
+touch-grass-quest
+/testdata/eval/*.jpg
+/testdata/eval/*.png
+/testdata/eval/*.webp
+!/testdata/eval/manifest.json
