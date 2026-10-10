@@ -77,4 +77,17 @@ func TestServer_CheckUpload(t *testing.T) {
 			t.Errorf("expected format error, got %s", string(body))
 		}
 	})
+	t.Run("Apostrophes and Prefix formatting", func(t *testing.T) {
+		verifier.Next = Verdict{Match: false, Outdoors: true, Reason: "Not quite. It's a coffee mug."}
+		jpegBytes := []byte{0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x01, 0x00, 0x48, 0x00, 0x48, 0x00, 0x00}
+		resp := makeReq("test.jpg", "image/jpeg", jpegBytes)
+		
+		var cr CheckResponse
+		json.NewDecoder(resp.Body).Decode(&cr)
+		
+		expected := "Not quite. It's a coffee mug."
+		if cr.Message != expected {
+			t.Errorf("expected %q, got %q", expected, cr.Message)
+		}
+	})
 }

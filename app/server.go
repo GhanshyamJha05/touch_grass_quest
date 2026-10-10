@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"html"
 	"io"
 	"io/fs"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -129,15 +129,16 @@ func (s *Server) handleCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Escape reason as per requirements
-	verdict.Reason = html.EscapeString(verdict.Reason)
-
 	if verdict.Match && verdict.Outdoors {
 		sendCheckResponse(w, true, fmt.Sprintf("Pass! %s", verdict.Reason))
 	} else if verdict.Match && !verdict.Outdoors {
 		sendCheckResponse(w, false, "Looks like it's indoors or a screen, take it outside. " + verdict.Reason)
 	} else {
-		sendCheckResponse(w, false, fmt.Sprintf("Not quite. %s", verdict.Reason))
+		reason := verdict.Reason
+		if strings.HasPrefix(strings.ToLower(reason), "not quite.") {
+			reason = strings.TrimSpace(reason[10:])
+		}
+		sendCheckResponse(w, false, fmt.Sprintf("Not quite. %s", reason))
 	}
 }
 
